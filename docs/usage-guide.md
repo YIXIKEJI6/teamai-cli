@@ -1,5 +1,7 @@
 # TeamAI CLI — Team Onboarding & Usage Guide
 
+> Organization fork central usage is a separate service. See [central service](central-service.md); the HTTP resource contract below remains unchanged and does not imply usage ingestion or Hook installation.
+
 > [English](usage-guide.md) | [简体中文](usage-guide.zh-CN.md)
 
 > **teamai-cli** — the team collaboration layer for AI agents

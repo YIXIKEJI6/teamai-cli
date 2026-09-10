@@ -1,0 +1,12 @@
+**
+!package.json
+!package-lock.json
+!tsconfig.json
+!tsup.config.ts
+!vitest.config.ts
+!src/
+!src/**
+!scripts/
+!scripts/central-copy-migrations.mjs
+!LICENSE
+!Dockerfile

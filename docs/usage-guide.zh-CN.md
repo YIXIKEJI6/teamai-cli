@@ -1,5 +1,7 @@
 # TeamAI CLI — 团队接入与使用指南
 
+> 组织 fork 的中央用量服务独立运行，见[中央服务说明](central-service.zh-CN.md)。下文原生 HTTP 资源契约保持原义，不代表已接入中央统计或已安装采集 Hook。
+
 > [English](usage-guide.md) | [简体中文](usage-guide.zh-CN.md)
 
 > **teamai-cli** — AI Agents 的团队协作层

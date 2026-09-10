@@ -15,6 +15,12 @@ __pycache__/
 .npmrc
 .env
 .env.local
+# Central service data and credentials must never enter source control.
+*.sqlite
+*.sqlite-*
+*.token
+auth.json
+client-secrets/
 
 # Local AI tool / agent workspaces (worktrees, scratch state)
 .claude/

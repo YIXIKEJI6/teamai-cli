@@ -1,0 +1,24 @@
+services:
+  central:
+    image: ${TEAMAI_CENTRAL_IMAGE:?Set an immutable image ID or registry digest}
+    command: [serve]
+    user: "1000:1000"
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    restart: unless-stopped
+    ports: ["127.0.0.1:${TEAMAI_CENTRAL_LOCAL_PORT:-3722}:3722"]
+    environment:
+      TEAMAI_CENTRAL_AUTH_FILE: /run/teamai/auth.json
+      TEAMAI_CENTRAL_ORIGIN: ${TEAMAI_CENTRAL_ORIGIN:?Set the reviewed public HTTPS origin}
+    volumes:
+      - usage:/data
+      - type: bind
+        source: ${TEAMAI_CENTRAL_AUTH_DIR:?Set the credential configuration directory}
+        target: /run/teamai
+        read_only: true
+    tmpfs: [/tmp:size=16m,noexec,nosuid]
+    mem_limit: 256m
+    cpus: 1
+volumes:
+  usage:
