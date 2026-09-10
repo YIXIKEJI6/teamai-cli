@@ -4,7 +4,7 @@
 
 ## 构建与合成验收
 
-需要 Docker Engine（含 Linux 容器）和 Node 20+ 来运行外部验收驱动；直接运行中央服务需要 Node 24。依赖由 package-lock 锁定。官方基础镜像 Node 24.19.0 的清单摘要写在 Dockerfile；镜像最终 ID 是本次构建产物摘要，不能与仓库 source commit 混淆。
+需要 Docker Engine（含 Linux 容器）和 Node 20+ 来运行外部验收驱动；直接运行中央服务需要 Node 24。依赖由 package-lock 锁定。官方基础镜像 Node 24.21.0 bookworm-slim 的 index 摘要写在 Dockerfile；镜像 config ID、注册表 manifest digest 和 source commit 是不同对象。CI 不上传注册表，不能把本地镜像 ID 填成尚不存在的发布摘要。
 
 ```sh
 docker build --build-arg SOURCE_REVISION="$(git rev-parse HEAD)" --iidfile /tmp/teamai-image-id .
@@ -12,7 +12,13 @@ export TEAMAI_CENTRAL_IMAGE="$(cat /tmp/teamai-image-id)"
 node scripts/central-e2e.mjs docker
 ```
 
-构建阶段安装一次锁定依赖、编译、类型检查和相关原生/中央回归；最终镜像只复制中央 bundle、迁移和许可证，不复制 node_modules、CLI、开发工具或凭据。外部验收驱动创建独立随机合成卷，通过真实 HTTP 验证两个成员/项目、错误鉴权、白名单、去重、乱序、登录撤销、数据/日志隐私，再删除和重建容器验证持久化。最后只清理本次合成容器和卷。
+构建阶段保留 npm，安装一次锁定依赖、编译、类型检查和相关原生/中央回归。运行阶段安装 Debian `libpcre2-8-0=10.42-1+deb12u1` 安全修复，并删除基础镜像自带 npm/Yarn 及其 Corepack 引导工具的实际目录、依赖和入口。应用只复制中央 bundle、迁移和许可证，不复制应用 node_modules、CLI 或凭据；其余 Debian/Node 文件仍在，须按准确镜像审查漏洞。
+
+外部验收驱动创建独立随机合成卷，通过真实 HTTP 验证两个成员/项目、错误鉴权、白名单、去重、乱序、登录撤销、数据/日志隐私，再重建容器验证持久化。容器内记录 Node/OpenSSL/Undici/zlib 实际版本、PCRE2 包版本与文件摘要、npm/Yarn 文件和入口缺席。镜像自带 HEALTHCHECK 必须真实执行成功；同时检查 UID 1000、只读根文件系统、capabilities、no-new-privileges、回环端口、只读鉴权挂载、256 MiB/1 CPU 与 tmpfs 约束。
+
+仅对驱动自建的合成库做参数化软删除 fixture，确认物理行保留、重复删除幂等、HTTP 汇总不可见。服务运行期间通过 SQLite 备份 API 制作一致副本，恢复到另一独立卷，核对 schema、dataset、物理行、删除状态、鉴权、重放和统计；原卷及恢复卷各执行两次迁移。最后只清理本次合成容器和卷，不增加业务删除或恢复接口。
+
+PCRE2 共享库字节必须匹配已安装包的校验和，并记录 SHA-256。保留 `dpkg -V` 原始输出；仅允许基础镜像既有 slim 文档排除配置对应的三份 README/changelog 缺席，运行库缺失或校验失败仍直接阻断。
 
 本机没有 Docker 时可单独验证真实 Node 进程链路，但该结果不能替代容器验收：
 
@@ -24,7 +30,7 @@ npm run build
 node scripts/central-e2e.mjs local
 ```
 
-CI 在一个 Ubuntu job 中执行 Docker 构建与上述容器验收，并保存摘要、来源标签和结果。它不推送镜像注册表、不发布 npm、不自动部署。容器 runtime 只内联 zod 和本服务；上游 CLI 依赖的漏洞审计与生产镜像依赖不是同一边界。
+沿用现有 CI 的单个 Ubuntu job 执行 Docker 构建与上述容器验收，保存镜像归档、来源标签和原始结果；config/layer 身份从归档回读，本次不修改 workflow。它不推送镜像注册表、不发布 npm、不自动部署。应用 bundle 只内联 zod 和本服务；上游 CLI 依赖审计、镜像系统依赖和 Node 内嵌库须分别归因。版本更新不等于其余依赖没有漏洞；发布前仍须保存准确镜像、扫描器和数据库身份，逐项审查剩余适用性。
 
 ## 配置与显式初始化
 

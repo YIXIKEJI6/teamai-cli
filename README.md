@@ -24,6 +24,11 @@ containing 367 dates returns HTTP 400.
 data in an independent volume and exposes a loopback port for a reviewed HTTPS proxy.
 `src/central/` owns the protocol, authentication, store and UI; `scripts/central-*`
 provides explicit credential preparation and real process/container acceptance.
+The runtime pins Node 24.21.0 on Debian bookworm, installs the PCRE2 security fix,
+and removes npm/Yarn and their Corepack bootstrap from the final filesystem. Container acceptance records actual
+runtime versions and security constraints, checks soft deletion, then backs up SQLite
+and verifies an independent restored volume. Remaining OS dependencies require review;
+this change does not declare a vulnerability-free image or production approval.
 
 The upstream CLI, Git resource distribution and loopback dashboard remain separate.
 The central service does not implement `/api/local-agent/report|sync|commands/ack` or
