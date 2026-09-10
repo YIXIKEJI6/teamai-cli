@@ -76,6 +76,13 @@ try {
   const before = await get(); assert.equal(before.sessions, 2); assert.equal(before.tokens.input, 350); assert.equal(before.unknown.cacheCreation, 2);
   assert.equal((await get('&member=synthetic-a&project=project-alpha')).sessions, 1);
   assert.equal((await get('&member=synthetic-a&project=project-beta')).sessions, 0);
+  const dateRangeBoundaries = [];
+  for (const [to, expectedStatus] of [['2026-01-01', 200], ['2026-01-02', 400]]) {
+    const response = await fetch(origin + '/api/usage/summary?' + new URLSearchParams({ from: '2025-01-01', to }), { headers: { Authorization: `Bearer ${admin}` } });
+    dateRangeBoundaries.push({ from: '2025-01-01', to, status: response.status });
+    assert.equal(response.status, expectedStatus, `Inclusive UTC range through ${to}`);
+    await response.arrayBuffer();
+  }
   await stop(); await start();
   const after = await get(); assert.deepEqual(after, before); assert.equal((await (await send(newer, a)).json()).result, 'duplicate');
   await stop();
@@ -84,7 +91,7 @@ try {
   else stored = readFileSync(db).toString('base64');
   const storage = Buffer.from(stored, 'base64').toString('utf8'), logs = readFileSync(logFile, 'utf8');
   for (const forbidden of [admin, a, b, 'PRIVATE_CONTENT_CANARY', 'promptSummary', 'tokenHash']) { assert(!storage.includes(forbidden)); assert(!logs.includes(forbidden)); }
-  const evidence = { mode, dataset: 'synthetic', checkedAt: new Date().toISOString(), image: mode === 'docker' ? image : null, uid: mode === 'docker' ? 1000 : process.getuid?.(), checks: ['two-members-two-projects', 'unknown-buckets', 'filters-and-empty', 'replay-and-ordering', 'invalid-forged-revoked-expired-auth', 'login-cookie-and-live-revocation', 'content-whitelist', 'recreate-persistence', 'database-and-log-privacy'], totals: before };
+  const evidence = { mode, dataset: 'synthetic', checkedAt: new Date().toISOString(), image: mode === 'docker' ? image : null, uid: mode === 'docker' ? 1000 : process.getuid?.(), checks: ['two-members-two-projects', 'unknown-buckets', 'filters-and-empty', 'inclusive-date-range-boundary', 'replay-and-ordering', 'invalid-forged-revoked-expired-auth', 'login-cookie-and-live-revocation', 'content-whitelist', 'recreate-persistence', 'database-and-log-privacy'], dateRangeBoundaries, totals: before };
   console.log(JSON.stringify(evidence, null, 2));
 } finally {
   await stop();

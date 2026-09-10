@@ -17,6 +17,7 @@ TeamAI 统一管理团队的 Skills、Rules、MCP 和知识，驾驭 Claude Code
 
 本 fork 新增经过鉴权的中文用量页，按成员、项目和日期查看统计白名单汇总，使用 SQLite 持久化。
 从[中央服务运行说明](docs/central-service.zh-CN.md)（[English](docs/central-service.md)）开始。
+日期筛选包含首尾，最多允许 366 个 UTC 日期；包含 367 个日期的范围返回 HTTP 400。
 `Dockerfile` 构建独立 Node 24 服务，以 UID 1000 运行；`compose.yaml` 使用独立数据卷，
 端口绑定主机回环，由经审查的 HTTPS 反向代理提供外部入口。
 `src/central/` 包含协议、鉴权、存储和页面，`scripts/central-*` 提供显式凭据准备与真实进程/容器验收。

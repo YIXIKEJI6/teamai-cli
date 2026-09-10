@@ -102,7 +102,8 @@ export function createCentralServer(options: { db: string; auth: string; origin:
         }
         for (const key of url.searchParams.keys()) if (!['member', 'project', 'from', 'to'].includes(key) || url.searchParams.getAll(key).length !== 1) throw new HttpError(400);
         const today = new Date().toISOString().slice(0, 10), from = date(url.searchParams.get('from'), today), to = date(url.searchParams.get('to'), today);
-        if (from > to || Date.parse(to) - Date.parse(from) > 366 * 86400_000) throw new HttpError(400);
+        const inclusiveDays = (Date.parse(to) - Date.parse(from)) / 86400_000 + 1;
+        if (inclusiveDays < 1 || inclusiveDays > 366) throw new HttpError(400);
         const filter = z.object({ member: z.string().regex(/^[a-zA-Z0-9_-]{1,64}$/).optional(), project: z.string().regex(/^[a-zA-Z0-9_-]{1,64}$/).optional(), from: z.string(), to: z.string() })
           .safeParse({ member: url.searchParams.get('member') ?? undefined, project: url.searchParams.get('project') ?? undefined, from, to });
         if (!filter.success) throw new HttpError(400);

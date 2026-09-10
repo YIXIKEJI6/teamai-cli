@@ -100,6 +100,14 @@ describe('central usage: real HTTP and persistent SQLite, synthetic data only', 
       expect((await fetch(origin + '/api/usage/summary?' + dates, { headers: { Authorization: `Bearer ${admin}` } })).status).toBe(400);
     }
   });
+  it.each([
+    { from: '2025-01-01', to: '2026-01-01', expected: 200 },
+    { from: '2025-01-01', to: '2026-01-02', expected: 400 },
+  ])('enforces inclusive UTC date range $from through $to (HTTP $expected)', async ({ from, to, expected }) => {
+    const query = new URLSearchParams({ from, to });
+    const response = await fetch(origin + '/api/usage/summary?' + query, { headers: { Authorization: `Bearer ${admin}` } });
+    expect(response.status).toBe(expected);
+  });
   it('retains committed data across server recreation and explicit migration retry', async () => {
     const value = snapshot(); await post(value); await close(); migrate(db, sql, 'synthetic'); await start();
     expect((await (await summary()).json()).sessions).toBe(1);

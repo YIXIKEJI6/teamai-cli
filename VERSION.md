@@ -1,5 +1,15 @@
 # Fork change log / 组织 fork 版本记录
 
+## central-infra 0.1.1 candidate — 2026-09-10
+
+- 修复汇总日期筛选的首尾边界：最多接受 366 个 UTC 日期；此前日期差计算漏算端点，错误接受了 367 个日期。
+- `2025-01-01` 至 `2026-01-01` 保持 HTTP 200，至 `2026-01-02` 返回 HTTP 400；真实 HTTP 回归和独立进程/容器驱动覆盖两侧边界，README 与中英文运行说明同步。
+- 同一基础建设候选的修复，待独立验收；原生 CLI 版本、存储结构、真实 Hook 和生产部署状态不变。
+
+English: fixes the inclusive UTC summary range limit. A range containing 366 dates
+remains valid; 367 dates now return HTTP 400. HTTP and process/container regression
+checks cover both endpoints. This remains a candidate for independent acceptance.
+
 ## central-infra 0.1.0 candidate — 2026-09-10
 
 - 基于 Tencent/teamai-cli `3f7fa1dedbccac1416fe329bdd308bb45de30b0e` 新增独立中央统计服务；原 package 版本保持 0.22.0，不冒充 npm 0.23.x 或自动升级用户 CLI。

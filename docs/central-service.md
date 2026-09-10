@@ -85,6 +85,8 @@ rollouts into one logical session snapshot before sending; modern Codex snapshot
 are already session-scoped. No real producer Hook is shipped/enabled in this stage.
 
 Summary filters are member/project/from/to, inclusive UTC dates, maximum 366 days.
+For example, `from=2025-01-01&to=2026-01-01` includes 366 dates and is valid;
+extending `to` to `2026-01-02` includes 367 dates and returns HTTP 400.
 Whole sessions are attributed to firstStopAt's UTC date, even when resumed later.
 This is not per-request usage during the selected interval. Input excludes cached
 buckets according to native TeamAI parsing. Unknown is null, never an invented zero;

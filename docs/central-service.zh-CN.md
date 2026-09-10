@@ -61,6 +61,8 @@ Compose 只映射 127.0.0.1:3722，根文件系统只读、UID 1000、cap_drop=A
 | GET /api/usage/options | 管理员 | 允许成员/项目别名 |
 | GET /api/usage/summary | 管理员 | member/project/from/to 筛选；日期含首尾，最多 366 天 |
 
+日期边界示例：`from=2025-01-01&to=2026-01-01` 包含 366 个日期，可以查询；结束日期延长至 `2026-01-02` 则包含 367 个日期，返回 HTTP 400。
+
 report 必需字段：schemaVersion=1、UUID eventId/sessionId、绑定的 memberId/installationId/project、firstStopAt/observedAt（UTC，精确到毫秒）、单调正整数 sequence、prompts（非负整数或 null）、tokens 四桶 input/output/cacheRead/cacheCreation（各为非负整数或 null）、producerVersion。每个计数最多 10^12，请求最多 8192 字节。拒绝未知字段、负数、路径、未来时间超过 5 分钟、身份不符或不允许的项目；返回泛化错误，不回显输入。
 
 上游 Codex 新格式为会话级累计 token_usage_record；旧格式按 rollout 取最新再汇总。**中央接口要求生产端先完成逻辑会话聚合**，不能每个 rollout 独立上报为同一累计快照，否则会被冲突检查拒绝或口径错误。客户端适配/Hook 属于后续阶段，本版本只有合成验收驱动，不能把上游 event 文件直接 POST。

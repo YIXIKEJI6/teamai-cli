@@ -18,6 +18,8 @@ TeamAI manages your team's skills, rules, MCP, and knowledge across Claude Code,
 This fork adds a Chinese, authenticated usage dashboard with member/project/date filters,
 strict statistics-only reports and persistent SQLite storage. Start with the
 [central service guide](docs/central-service.md) ([中文](docs/central-service.zh-CN.md)).
+Date filters include both endpoints and allow at most 366 UTC dates; a range
+containing 367 dates returns HTTP 400.
 `Dockerfile` builds the standalone Node 24 service as UID 1000; `compose.yaml` keeps
 data in an independent volume and exposes a loopback port for a reviewed HTTPS proxy.
 `src/central/` owns the protocol, authentication, store and UI; `scripts/central-*`
