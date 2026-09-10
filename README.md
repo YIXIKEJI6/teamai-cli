@@ -6,12 +6,34 @@
 
 > [English](README.md) | [简体中文](README.zh-CN.md)
 
-[![CI](https://github.com/Tencent/teamai-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/Tencent/teamai-cli/actions/workflows/ci.yml)
+[![CI](https://github.com/YIXIKEJI6/teamai-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/YIXIKEJI6/teamai-cli/actions/workflows/ci.yml)
 [![npm version](https://img.shields.io/npm/v/teamai-cli.svg)](https://www.npmjs.com/package/teamai-cli)
 [![npm downloads](https://img.shields.io/npm/dm/teamai-cli.svg)](https://www.npmjs.com/package/teamai-cli)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 TeamAI manages your team's skills, rules, MCP, and knowledge across Claude Code, Codex, CodeBuddy, WorkBuddy, OpenCode, Cursor, and other AI agents.
+
+## Organization fork: central usage service
+
+This fork adds a Chinese, authenticated usage dashboard with member/project/date filters,
+strict statistics-only reports and persistent SQLite storage. Start with the
+[central service guide](docs/central-service.md) ([中文](docs/central-service.zh-CN.md)).
+Date filters include both endpoints and allow at most 366 UTC dates; a range
+containing 367 dates returns HTTP 400.
+`Dockerfile` builds the standalone Node 24 service as UID 1000; `compose.yaml` keeps
+data in an independent volume and exposes a loopback port for a reviewed HTTPS proxy.
+`src/central/` owns the protocol, authentication, store and UI; `scripts/central-*`
+provides explicit credential preparation and real process/container acceptance.
+
+The upstream CLI, Git resource distribution and loopback dashboard remain separate.
+The central service does not implement `/api/local-agent/report|sync|commands/ack` or
+install collection Hooks. The npm installation instructions below refer to upstream;
+this fork is private to npm publishing and has no automatic production deployment.
+Its CI builds the exact PR head and exercises a synthetic container, not production.
+Use a registered stable developer branch and retain it after independent acceptance.
+
+Upstream source baseline: `3f7fa1dedbccac1416fe329bdd308bb45de30b0e`, MIT.
+Fork behavior changes are tracked in [VERSION.md](VERSION.md).
 
 ## Contributors
 

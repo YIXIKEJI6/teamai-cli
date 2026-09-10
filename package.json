@@ -1,5 +1,6 @@
 {
   "name": "teamai-cli",
+  "private": true,
   "version": "0.22.0",
   "description": "TeamAI — Make Every Team AI Native (skill sync + shared knowledge base, powered by Git)",
   "type": "module",
@@ -18,7 +19,8 @@
     "access": "public"
   },
   "scripts": {
-    "build": "tsup",
+    "build": "tsup && node scripts/central-copy-migrations.mjs",
+    "test:central": "vitest run src/__tests__/central-usage.test.ts src/__tests__/conversation-token-metrics.test.ts src/__tests__/dashboard-collector.test.ts src/__tests__/http-repo-integration.test.ts src/__tests__/self-mode-digest-skillpath.test.ts",
     "dev": "tsup --watch",
     "test": "vitest run",
     "test:e2e": "vitest run --config vitest.e2e.config.ts",
@@ -68,7 +70,7 @@
   "devDependencies": {
     "@types/cross-spawn": "^6.0.6",
     "@types/fs-extra": "^11.0.4",
-    "@types/node": "^20.17.0",
+    "@types/node": "24.0.0",
     "@types/semver": "^7.8.0",
     "@vitest/coverage-v8": "^2.1.9",
     "opencode-ai": "1.18.23",

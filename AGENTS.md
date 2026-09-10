@@ -1,5 +1,18 @@
 # TeamAI CLI
 
+## Organization fork policy
+
+This fork delivers the central usage service tracked by YIXIKEJI6/teamai-cli#1.
+Its PRs target this fork only. Use the assigned isolated checkout and the stable
+developer branch `codex/JohnDuncan5171`; retain that branch after merge. No new
+worktrees or per-issue/role/round remote branches for this work. The central UI
+is Chinese; existing CLI output stays English. Public code and evidence contain
+only generic configuration and synthetic identities. Never publish this fork to
+npm, enable production deployment triggers, or copy private operational material.
+These approved fork rules override the corresponding upstream Git and UI rules
+below. Independent acceptance is required before merge; implementation does not
+authorize self-merge. Preserve upstream licensing and Git/resource behavior.
+
 CLI for syncing team skills, rules, docs, and env across AI coding tools. Package: [`teamai-cli`](https://www.npmjs.com/package/teamai-cli).
 
 TypeScript, Node 20+, tsup (ESM), Vitest. Commands: `npm run build`, `npx tsc --noEmit`, `npx vitest run`.

@@ -7,6 +7,9 @@ on:
 
 jobs:
   publish-npm:
+    # The organization fork never publishes the upstream npm package.
+    if: github.repository == 'Tencent/teamai-cli'
+    timeout-minutes: 12
     name: Publish to public npm
     runs-on: ubuntu-latest
     permissions:

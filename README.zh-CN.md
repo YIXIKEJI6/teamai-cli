@@ -6,12 +6,29 @@
 
 > [English](README.md) | [简体中文](README.zh-CN.md)
 
-[![CI](https://github.com/Tencent/teamai-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/Tencent/teamai-cli/actions/workflows/ci.yml)
+[![CI](https://github.com/YIXIKEJI6/teamai-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/YIXIKEJI6/teamai-cli/actions/workflows/ci.yml)
 [![npm version](https://img.shields.io/npm/v/teamai-cli.svg)](https://www.npmjs.com/package/teamai-cli)
 [![npm downloads](https://img.shields.io/npm/dm/teamai-cli.svg)](https://www.npmjs.com/package/teamai-cli)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 TeamAI 统一管理团队的 Skills、Rules、MCP 和知识，驾驭 Claude Code、Codex、CodeBuddy、WorkBuddy、OpenCode、Cursor 等 AI Agents。
+
+## 组织 fork：团队用量服务
+
+本 fork 新增经过鉴权的中文用量页，按成员、项目和日期查看统计白名单汇总，使用 SQLite 持久化。
+从[中央服务运行说明](docs/central-service.zh-CN.md)（[English](docs/central-service.md)）开始。
+日期筛选包含首尾，最多允许 366 个 UTC 日期；包含 367 个日期的范围返回 HTTP 400。
+`Dockerfile` 构建独立 Node 24 服务，以 UID 1000 运行；`compose.yaml` 使用独立数据卷，
+端口绑定主机回环，由经审查的 HTTPS 反向代理提供外部入口。
+`src/central/` 包含协议、鉴权、存储和页面，`scripts/central-*` 提供显式凭据准备与真实进程/容器验收。
+
+原生 CLI、Git 资源分发、本机 Dashboard 保留各自入口。中央服务不实现
+`/api/local-agent/report|sync|commands/ack`，也不安装采集 Hook。下文 npm 安装指向上游，
+本 fork 禁止 npm 发布和自动生产部署。CI 构建准确 PR HEAD 并验证合成数据容器，生产验收另行留证。
+开发使用已登记的稳定开发者分支，独立验收合并后保留该分支。
+
+上游基线 `3f7fa1dedbccac1416fe329bdd308bb45de30b0e`，保留 MIT 许可证。
+fork 行为变更见 [VERSION.md](VERSION.md)。
 
 ## 贡献者
 

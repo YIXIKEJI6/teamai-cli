@@ -1,0 +1,9 @@
+{
+  "dataset": "synthetic",
+  "expiresAt": "2027-01-01T00:00:00.000Z",
+  "admins": ["synthetic-admin"],
+  "installations": [
+    { "memberId": "synthetic-a", "installationId": "installation-a", "projects": ["project-alpha"] },
+    { "memberId": "synthetic-b", "installationId": "installation-b", "projects": ["project-beta"] }
+  ]
+}
