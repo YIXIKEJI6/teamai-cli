@@ -8,5 +8,6 @@
 !src/**
 !scripts/
 !scripts/central-copy-migrations.mjs
+!scripts/central-safety-check.mjs
 !LICENSE
 !Dockerfile
