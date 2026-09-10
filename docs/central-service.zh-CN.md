@@ -12,7 +12,7 @@ export TEAMAI_CENTRAL_IMAGE="$(cat /tmp/teamai-image-id)"
 node scripts/central-e2e.mjs docker
 ```
 
-构建阶段保留 npm，安装一次锁定依赖、编译、类型检查和相关原生/中央回归。运行阶段安装 Debian `libpcre2-8-0=10.42-1+deb12u1` 安全修复，并删除基础镜像自带 npm/Yarn 的实际目录、依赖和入口。应用只复制中央 bundle、迁移和许可证，不复制应用 node_modules、CLI 或凭据；其余 Debian/Node 文件仍在，须按准确镜像审查漏洞。
+构建阶段保留 npm，安装一次锁定依赖、编译、类型检查和相关原生/中央回归。运行阶段安装 Debian `libpcre2-8-0=10.42-1+deb12u1` 安全修复，并删除基础镜像自带 npm/Yarn 及其 Corepack 引导工具的实际目录、依赖和入口。应用只复制中央 bundle、迁移和许可证，不复制应用 node_modules、CLI 或凭据；其余 Debian/Node 文件仍在，须按准确镜像审查漏洞。
 
 外部验收驱动创建独立随机合成卷，通过真实 HTTP 验证两个成员/项目、错误鉴权、白名单、去重、乱序、登录撤销、数据/日志隐私，再重建容器验证持久化。容器内记录 Node/OpenSSL/Undici/zlib 实际版本、PCRE2 包版本与文件摘要、npm/Yarn 文件和入口缺席。镜像自带 HEALTHCHECK 必须真实执行成功；同时检查 UID 1000、只读根文件系统、capabilities、no-new-privileges、回环端口、只读鉴权挂载、256 MiB/1 CPU 与 tmpfs 约束。
 

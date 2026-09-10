@@ -21,7 +21,7 @@ TeamAI 统一管理团队的 Skills、Rules、MCP 和知识，驾驭 Claude Code
 `Dockerfile` 构建独立 Node 24 服务，以 UID 1000 运行；`compose.yaml` 使用独立数据卷，
 端口绑定主机回环，由经审查的 HTTPS 反向代理提供外部入口。
 `src/central/` 包含协议、鉴权、存储和页面，`scripts/central-*` 提供显式凭据准备与真实进程/容器验收。
-运行镜像固定 Debian bookworm 上的 Node 24.21.0，安装 PCRE2 安全修复，并从最终文件系统移除 npm/Yarn。
+运行镜像固定 Debian bookworm 上的 Node 24.21.0，安装 PCRE2 安全修复，并从最终文件系统移除 npm/Yarn 及其 Corepack 引导工具。
 容器验收记录实际运行库版本和安全约束，验证软删除后，用 SQLite 备份 API 在独立卷恢复并核对数据。
 其余系统依赖仍需审查；本次变更不代表镜像已无漏洞或生产已获批准。
 

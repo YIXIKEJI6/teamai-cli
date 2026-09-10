@@ -8,6 +8,7 @@ assert.equal(process.versions.node, '24.21.0');
 assert.equal(process.versions.openssl, '3.5.8');
 assert.equal(process.versions.undici, '7.29.1');
 const absent = ['/usr/local/lib/node_modules/npm', '/opt/yarn-v1.22.22',
+  '/usr/local/lib/node_modules/corepack', '/usr/local/bin/corepack', '/usr/local/bin/pnpm', '/usr/local/bin/pnpx',
   '/usr/local/bin/npm', '/usr/local/bin/npx', '/usr/local/bin/yarn', '/usr/local/bin/yarnpkg'];
 for (const file of absent) assert.throws(() => lstatSync(file), { code: 'ENOENT' }, file);
 assert.deepEqual(readdirSync('/usr/local/lib/node_modules'), []);

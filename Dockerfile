@@ -19,11 +19,12 @@ LABEL org.opencontainers.image.source="https://github.com/YIXIKEJI6/teamai-cli" 
       org.opencontainers.image.licenses="MIT"
 WORKDIR /app
 # Keep the same Debian release; install the specific PCRE2 security fix.
-# npm/Yarn are needed only in the build stage, including their bundled dependencies.
+# Package managers and the Corepack bootstrap are not needed by the service.
 RUN apt-get update \
     && apt-get install -y --no-install-recommends libpcre2-8-0=10.42-1+deb12u1 \
-    && rm -rf /var/lib/apt/lists/* /usr/local/lib/node_modules/npm /opt/yarn-v${YARN_VERSION} \
-    && rm -f /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/yarn /usr/local/bin/yarnpkg
+    && rm -rf /var/lib/apt/lists/* /usr/local/lib/node_modules/npm /usr/local/lib/node_modules/corepack /opt/yarn-v${YARN_VERSION} \
+    && rm -f /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/yarn /usr/local/bin/yarnpkg \
+        /usr/local/bin/corepack /usr/local/bin/pnpm /usr/local/bin/pnpx
 # The application bundle is self-contained; no application node_modules are copied.
 COPY --from=checks /app/dist/central.js ./dist/central.js
 COPY --from=checks /app/dist/migrations ./dist/migrations

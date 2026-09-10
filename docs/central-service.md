@@ -16,7 +16,7 @@ node scripts/central-e2e.mjs docker
 
 The official Node 24.21.0 bookworm-slim image index digest is pinned in Dockerfile.
 The runtime installs Debian's `libpcre2-8-0=10.42-1+deb12u1` security fix and removes
-the inherited npm/Yarn directories, dependencies and entrypoints from the final
+the inherited npm/Yarn and Corepack directories, dependencies and entrypoints from the final
 filesystem. The build retains npm for locked installation and runs type checking
 and central/upstream regressions. Only the central application bundle, migration
 and license are copied to runtime; Debian/Node files remain and need image-level

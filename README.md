@@ -25,7 +25,7 @@ data in an independent volume and exposes a loopback port for a reviewed HTTPS p
 `src/central/` owns the protocol, authentication, store and UI; `scripts/central-*`
 provides explicit credential preparation and real process/container acceptance.
 The runtime pins Node 24.21.0 on Debian bookworm, installs the PCRE2 security fix,
-and removes npm/Yarn from the final filesystem. Container acceptance records actual
+and removes npm/Yarn and their Corepack bootstrap from the final filesystem. Container acceptance records actual
 runtime versions and security constraints, checks soft deletion, then backs up SQLite
 and verifies an independent restored volume. Remaining OS dependencies require review;
 this change does not declare a vulnerability-free image or production approval.
