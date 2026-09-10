@@ -20,17 +20,19 @@ jobs:
       - name: Build exact source and run required regression tests
         timeout-minutes: 8
         run: |
-          set -eu
+          set -euo pipefail
           docker build --build-arg SOURCE_REVISION="$(git rev-parse HEAD)" --iidfile /tmp/teamai-image-id .
       - name: Real container authentication and persistence acceptance
         timeout-minutes: 2
         run: |
-          set -eu
+          set -euo pipefail
           mkdir -p evidence
           export TEAMAI_CENTRAL_IMAGE="$(cat /tmp/teamai-image-id)"
           node scripts/central-e2e.mjs docker > evidence/container-e2e.json
           docker image inspect "$TEAMAI_CENTRAL_IMAGE" --format '{{json .Config.Labels}}' > evidence/image-source.json
           cp /tmp/teamai-image-id evidence/image-id.txt
+          docker save "$TEAMAI_CENTRAL_IMAGE" | gzip -n > evidence/central-image.tar.gz
+          (cd evidence && sha256sum central-image.tar.gz > central-image.tar.gz.sha256)
       - name: Preserve acceptance evidence
         uses: actions/upload-artifact@v4
         with:
