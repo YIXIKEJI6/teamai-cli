@@ -1,4 +1,4 @@
-FROM node:24.19.0-bookworm-slim@sha256:a9f5f7c91a432850b2a8a7797adf5eadb6c733ceed61167806cee7ea7fbc29df AS build
+FROM node:24.21.0-bookworm-slim@sha256:2fe369e969550cde8e867afc3fe370b260140cab4a23d467074295b42163d553 AS build
 WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends git ca-certificates && rm -rf /var/lib/apt/lists/*
 COPY package.json package-lock.json ./
@@ -12,13 +12,19 @@ RUN npm run build
 FROM build AS checks
 RUN node scripts/central-safety-check.mjs && npm run typecheck && npm run test:central
 
-FROM node:24.19.0-bookworm-slim@sha256:a9f5f7c91a432850b2a8a7797adf5eadb6c733ceed61167806cee7ea7fbc29df AS runtime
+FROM node:24.21.0-bookworm-slim@sha256:2fe369e969550cde8e867afc3fe370b260140cab4a23d467074295b42163d553 AS runtime
 ARG SOURCE_REVISION
 LABEL org.opencontainers.image.source="https://github.com/YIXIKEJI6/teamai-cli" \
       org.opencontainers.image.revision="${SOURCE_REVISION}" \
       org.opencontainers.image.licenses="MIT"
 WORKDIR /app
-# The central bundle is self-contained. No CLI dependencies, tooling, credentials or HOME in this image.
+# Keep the same Debian release; install the specific PCRE2 security fix.
+# npm/Yarn are needed only in the build stage, including their bundled dependencies.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends libpcre2-8-0=10.42-1+deb12u1 \
+    && rm -rf /var/lib/apt/lists/* /usr/local/lib/node_modules/npm /opt/yarn-v${YARN_VERSION} \
+    && rm -f /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/yarn /usr/local/bin/yarnpkg
+# The application bundle is self-contained; no application node_modules are copied.
 COPY --from=checks /app/dist/central.js ./dist/central.js
 COPY --from=checks /app/dist/migrations ./dist/migrations
 COPY LICENSE ./LICENSE

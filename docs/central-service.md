@@ -14,19 +14,38 @@ export TEAMAI_CENTRAL_IMAGE="$(cat /tmp/teamai-image-id)"
 node scripts/central-e2e.mjs docker
 ```
 
-The official Node 24.19.0 image manifest is pinned in Dockerfile. The build runs
-type checking and central/upstream regressions. Runtime contains only the central
-bundle, migration and license, runs as UID 1000 and needs an independent data volume.
+The official Node 24.21.0 bookworm-slim image index digest is pinned in Dockerfile.
+The runtime installs Debian's `libpcre2-8-0=10.42-1+deb12u1` security fix and removes
+the inherited npm/Yarn directories, dependencies and entrypoints from the final
+filesystem. The build retains npm for locked installation and runs type checking
+and central/upstream regressions. Only the central application bundle, migration
+and license are copied to runtime; Debian/Node files remain and need image-level
+vulnerability review. Runtime uses UID 1000 and an independent data volume.
 The acceptance script uses fresh synthetic members, projects, credentials and a
 temporary volume. It tests actual HTTP, authentication, revocation, replay, ordering,
-privacy, then recreates the container and verifies unchanged data. It only removes
-its own synthetic resources. CI has one bounded job and retains image/source/evidence;
+privacy, then recreates the container and verifies unchanged data. It records actual
+Node/OpenSSL/Undici/zlib versions, PCRE2 package/file hashes and npm/Yarn absence.
+The image HEALTHCHECK must execute successfully; read-only root, UID, capabilities,
+no-new-privileges, loopback binding, read-only auth mount, 256 MiB/1 CPU and tmpfs
+constraints are checked. A fixture-only soft delete keeps the physical row and hides
+it from HTTP summaries. SQLite's backup API runs while the service is live; an
+independent restored volume must preserve schema, dataset, rows, deletion state,
+authentication, replay and summaries. Migration runs twice on both volumes.
+The driver only removes its own synthetic resources. The existing CI job retains
+the image archive, source and raw acceptance evidence; read config/layer identities
+from that archive. Its workflow is unchanged;
 it does not publish images, npm packages or production deployments.
 
 For a separate local process check (not a substitute for Docker), run `npm ci
 --ignore-scripts`, `npm run typecheck`, `npm run test:central`, `npm run build`, then
 `node scripts/central-e2e.mjs local`. Existing CLI output and Node 20 build target
 remain; only the central runtime requires Node 24 with native SQLite.
+
+The release version and installed package fix are not a claim that all remaining
+OS/embedded libraries are vulnerability-free. Scan the exact built image, retain
+the scanner/database identity, and review remaining applicability before release.
+An image config ID is distinct from a registry manifest digest. CI does not publish
+to a registry; do not invent a deployment digest from a local image ID.
 
 ## Operator configuration
 

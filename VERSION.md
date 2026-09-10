@@ -1,5 +1,19 @@
 # Fork change log / 组织 fork 版本记录
 
+## central-infra 0.1.2 candidate — 2026-09-10
+
+- 在原 Debian bookworm 发行系内固定 Node 24.21.0 官方 index digest，运行阶段安装 PCRE2 `10.42-1+deb12u1` 修复版本；从最终文件系统移除 npm/Yarn 目录、依赖与入口，构建阶段仍按原锁文件使用 npm。
+- 容器验收读取实际 Node/OpenSSL/Undici/zlib、PCRE2 包/文件摘要与工具缺席证据，检查真实 HEALTHCHECK 及原 Compose 对应的权限、挂载、回环端口和资源约束。
+- 合成数据库回归增加重复迁移、软删除物理行/统计不可见，以及服务在线备份、独立卷恢复后的鉴权、重放、schema/dataset、统计与删除状态核对；沿用现有 CI 的镜像归档和原始验收输出，config/layer 身份从归档回读。
+- README 和两种语言的运行说明同步。业务协议、数据库结构和应用入口保持原实现；候选仍待独立镜像/漏洞验收，剩余系统与内嵌依赖风险不由版本记录接受。没有注册表发布、生产变更或真实 Hook 发放。
+
+English: pins Node 24.21.0 on the existing Debian release, installs the specific
+PCRE2 security fix and removes npm/Yarn from the final runtime filesystem. Actual
+container checks cover dependency versions, health, deployment constraints, repeat
+migration, soft deletion and a live SQLite backup restored to an independent volume.
+CI retains the image identity and raw results. Remaining vulnerabilities require
+independent review; this is not registry publication or production approval.
+
 ## central-infra 0.1.1 candidate — 2026-09-10
 
 - 修复汇总日期筛选的首尾边界：最多接受 366 个 UTC 日期；此前日期差计算漏算端点，错误接受了 367 个日期。
