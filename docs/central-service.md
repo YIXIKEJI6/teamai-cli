@@ -25,6 +25,9 @@ The acceptance script uses fresh synthetic members, projects, credentials and a
 temporary volume. It tests actual HTTP, authentication, revocation, replay, ordering,
 privacy, then recreates the container and verifies unchanged data. It records actual
 Node/OpenSSL/Undici/zlib versions, PCRE2 package/file hashes and npm/Yarn absence.
+PCRE2 library bytes must match the installed package checksum. The raw `dpkg -V`
+report is retained; only the three named README/changelog omissions covered by
+the base image's existing slim documentation policy are allowed.
 The image HEALTHCHECK must execute successfully; read-only root, UID, capabilities,
 no-new-privileges, loopback binding, read-only auth mount, 256 MiB/1 CPU and tmpfs
 constraints are checked. A fixture-only soft delete keeps the physical row and hides
